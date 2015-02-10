@@ -1,0 +1,26 @@
+<div class="ow_automargin ow_wide">
+{form name="form"}
+	<table class="ow_table_1 ow_form">
+	    <tr class="ow_tr_first">
+	        <th class="ow_name ow_txtleft" colspan="2">
+	            <span class="ow_section_icon ow_ic_gear_wheel">{text key="blogs+settings"}</span>
+	        </th>
+	    </tr>
+	    
+	    <tr class="{cycle values='ow_alt1, ow_alt2'} ow_tr_last">
+	    	<td style="width: 50%">
+	    		{text key="blogs+admin_settings_results_per_page"}
+	    	</td>
+	    	<td>
+	    		{input name='results_per_page' style="width: 50px;"}<br />
+	    		{error name='results_per_page'}
+	    	</td>
+	    </tr>
+	</table>
+    <div class="clearfix ow_submit ow_stdmargin">
+    	<div class="ow_right">
+    	{submit name="submit"}
+    	</div>
+    </div>
+{/form}
+</div>

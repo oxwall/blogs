@@ -1,0 +1,40 @@
+{style}{literal}
+.ow_ipc .ow_ipc_info .clearfix .ow_ipc_toolbar{
+    white-space: normal;
+}
+
+{/literal}{/style}
+
+{if !empty($list)}
+	{foreach from=$list item='post'}
+		{*-- decorator data*}
+		{assign var="dto" value=$post.dto}
+		{assign var=userId value=$dto->getAuthorId()}
+		{capture assign='info_string'}
+			<a href="{$post.url}">{$post.dto->getTitle()|strip_tags}</a>
+		{/capture}
+
+		{capture assign="moreLink"}<a class="ow_lbutton" href="{$post.url}">{text key='blogs+more'}</a>{/capture}
+
+		{capture assign='content'}
+			{if $commentInfo[$dto->id] > 0}
+				<div class="ow_small ow_smallmargin">
+					<span class="ow_txt_value">
+						{$commentInfo[$dto->id]}
+					</span>
+					<a href="{$post.url}">
+						{text key='blogs+toolbar_comments'}
+					</a>
+				</div>
+			{/if}
+			<div class="ow_smallmargin">{if $post.truncated}{$post.text|strip_tags}... {$moreLink}{else}{$post.text|strip_tags}{/if}</div>
+		{/capture}
+
+		{decorator name='ipc' addClass='ow_smallmargin' infoString=$info_string content=$content avatar=$avatars[$userId] toolbar=$tbars[$dto->id]}
+	{/foreach}
+{else}
+	<div class="ow_nocontent">
+		{capture assign ='addnewurl'}{url_for_route for='post-save-new'}{/capture}
+		{text key="blogs+index_widget_empty"} <a href="{$addnewurl}">{text key='blogs+add_new'}</a>
+	</div>
+{/if}

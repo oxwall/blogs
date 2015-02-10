@@ -1,0 +1,67 @@
+<div class="clearfix">{add_content key='blogs.add_content.list.top' listType=$listType}</div>
+
+{style}{literal}
+.ow_wrap_normal{
+    white-space: normal;
+}
+{/literal}{/style}
+
+{if $addNew_isAuthorized}
+    {if $addNew_promoted}
+        <div class="ow_right">{decorator name='button' class='ow_ic_add' id='btn-add-new-post' langLabel='blogs+add_new'}</div>
+    {else}
+        <div class="ow_right">{decorator name='button' class='ow_ic_add' id='btn-add-new-post' langLabel='blogs+add_new' onclick="location.href='`$url_new_post`'"}</div>
+    {/if}
+{/if}
+	{$menu}
+      <div class="ow_blogs_list clearfix">
+
+         <div class="ow_superwide" style="float:left;">
+
+			{if $isBrowseByTagCase}       
+				{if $tag}
+	         	<div class="ow_anno ow_stdmargin ow_center ow_ic_warning">
+					{text key="blogs+results_by_tag" tag=$tag}
+				</div>
+				{else}
+					{$tagCloud}				
+				{/if}
+         	{/if}
+                
+            {if $showList}
+            {foreach from=$list item='post'}
+            
+				{assign var=dto value=$post.dto}
+
+				{*-- decorator data*}
+
+				{assign var=userId value=$dto->getAuthorId()}
+
+				{capture assign='info_string'}
+					<a href="{$post.url}">{$dto->getTitle()}</a>
+				{/capture}
+
+				{capture assign='content'}
+					{$post.text}{if $post.showMore}... <a class="ow_lbutton" href="{$post.url}">{text key='blogs+more'}</a>{/if}
+				{/capture}
+				{assign var='id' value=$dto->getId()}
+
+				{*~~ decorator data*}
+
+            	{decorator name='ipc' infoString=$info_string addClass="ow_stdmargin" content=$content toolbar=$toolbars[$id] avatar=$avatars[$userId]}
+            {foreachelse}
+            	{text key='base+empty_list'}
+            {/foreach}
+
+            {if $paging}<center>{$paging}</center>{/if}
+            {/if}
+        </div>    
+
+         <div class="ow_supernarrow" style="float:right;">
+         	{$tagSearch}
+         	{if $list|@count > 0}
+	         	{$tagCloud}
+         	{/if}
+         </div>
+
+      </div>

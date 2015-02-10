@@ -1,0 +1,46 @@
+<div class="clearfix">
+    <div class="ow_superwide" style="float:left;">
+        {foreach name=post_foreach from=$list item='post'}
+            {assign var='id' value=$post.id}
+
+                    {block_decorator name="box" type="empty" label=$post.title href=$post.href addClass="ow_stdmargin ow_stdpadding" toolbar=$tb[$id]}
+                        {$post.text}{if $post.truncated}... <a class="ow_lbutton" href="{$post.href}">{text key='blogs+more'}</a>{/if}
+
+
+                    {if !empty($post.parts) && $post.parts|@count>1}
+                        <br />
+                        <a href="{$post.href}">{text key="blogs+read_more"}</a>&nbsp;&raquo;
+                    {/if}
+                    {/block_decorator}
+        {foreachelse}
+            {text key='base+empty_list'}
+        {/foreach}
+
+        <div class="ow_stdmargin">{$paging}</div>
+
+    </div>
+
+    <div class="ow_supernarrow" style="float:right;">
+
+       {add_content key='socialsharing.get_sharing_buttons' entityType='user_blog' entityId=$author->id}
+
+       {block_decorator name="box" langLabel="blogs+blog_archive_lbl_archives" iconClass="ow_ic_clock"}
+          <ul class="ow_regular">
+            <li><a href="{url_for_route for="user-blog:[user=>`$username`]"}">{text key="base+all"}</a></li>
+            {foreach from=$archive key='year' item='months'}
+                {foreach from=$months item='month'}
+                    <li><a href="{url_for_route for="user-blog:[user=>$username]"}?month={$month}-{$year}">{text key="base+month_`$month`"} {$year}</a> </li>
+                {/foreach}
+            {/foreach}
+          </ul>
+       {/block_decorator}
+       {if $isOwner}
+       <div style="" class="ow_box ow_stdmargin clearfix ow_no_cap ow_break_word">
+            <div class="ow_my_drafts_widget clearfix ow_center">
+                {decorator name="button" langLabel="blogs+my_drafts" class="ow_ic_draft" onclick="location.href='$my_drafts_url'"}
+            </div>
+        </div>
+       {/if}
+       {add_content key='blogs.user_blog.content.after_archive'}
+    </div>
+</div>

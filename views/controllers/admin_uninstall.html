@@ -1,0 +1,18 @@
+
+<div class="ow_automargin ow_wide">
+{if $inprogress}
+    {block_decorator name='box' iconClass='ow_ic_clock' langLabel='blogs+uninstall_inprogress'}
+        {text key='blogs+uninstall_inprogress_desc'}
+    {/block_decorator}
+{else}
+	{block_decorator name='box' iconClass='ow_ic_warning' langLabel='blogs+delete_content_warning'}
+	<form id="form_delete" method="post">
+	    <input type="hidden" name="action" value="delete_content" />
+	    <div class="ow_smallmargin">{text key='blogs+delete_content_desc'}</div>
+	    <div class="ow_txtright">
+	    {decorator name='button' type='submit' id='btn-delete-content' langLabel='blogs+delete_content' class='ow_ic_delete ow_negative'}
+	    </div>
+	</form>
+	{/block_decorator}
+{/if}
+</div>
