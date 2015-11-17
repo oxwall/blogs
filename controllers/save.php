@@ -290,17 +290,16 @@ class SaveForm extends Form
         {
             $this->post->setTimestamp(time());
             //Required to make #698 and #822 work together
-            if ($_POST['command'] == 'draft')
+            if ( $_POST['command'] == 'draft' )
             {
                 $this->post->setIsDraft(2);
             }
 
-            BOL_AuthorizationService::getInstance()->trackAction('blogs', 'add_blog');
         }
         else
         {
             //If post is not new and saved as draft, remove their item from newsfeed
-            if ($_POST['command'] == 'draft')
+            if ( $_POST['command'] == 'draft' )
             {
                 OW::getEventManager()->trigger(new OW_Event('feed.delete_item', array('entityType' => 'blog-post', 'entityId' => $this->post->id)));
             }
@@ -318,7 +317,7 @@ class SaveForm extends Form
         if ( intval($this->post->getId()) > 0 )
         {
             $tags = $data['tf'];
-            foreach ($tags as $id => $tag)
+            foreach ( $tags as $id => $tag )
             {
                 $tags[$id] = UTIL_HtmlTag::stripTags($tag);
             }
@@ -326,11 +325,11 @@ class SaveForm extends Form
         $tagService = BOL_TagService::getInstance();
         $tagService->updateEntityTags($this->post->getId(), 'blog-post', $tags );
 
-        if ($this->post->isDraft())
+        if ( $this->post->isDraft() )
         {
             $tagService->setEntityStatus('blog-post', $this->post->getId(), false);
 
-            if ($isCreate)
+            if ( $isCreate )
             {
                 OW::getFeedback()->info(OW::getLanguage()->text('blogs', 'create_draft_success_msg'));
             }
@@ -352,7 +351,7 @@ class SaveForm extends Form
             ));
             OW::getEventManager()->trigger($event);
 
-            if ($isCreate)
+            if ( $isCreate )
             {
                 OW::getFeedback()->info(OW::getLanguage()->text('blogs', 'create_success_msg'));
 
@@ -366,6 +365,13 @@ class SaveForm extends Form
                 OW::getEventManager()->trigger(new OW_Event(PostService::EVENT_AFTER_EDIT, array(
                     'postId' => $this->post->getId()
                 )));
+            }
+
+            $blog_post = PostService::getInstance()->findById($this->post->id);
+
+            if( $blog_post->isDraft == PostService::POST_STATUS_PUBLISHED )
+            {
+                BOL_AuthorizationService::getInstance()->trackActionForUser($blog_post->authorId, 'blogs', 'add_blog');
             }
 
             $ctrl->redirect(OW::getRouter()->urlForRoute('post', array('id' => $this->post->getId())));

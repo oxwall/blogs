@@ -94,6 +94,8 @@ class BLOGS_CLASS_EventHandler
         $credits = new BLOGS_CLASS_Credits();
         OW::getEventManager()->bind('usercredits.on_action_collect', array($credits, 'bindCreditActionsCollect'));
         OW::getEventManager()->bind('usercredits.get_action_key', array($credits, 'getActionKey'));
+
+        OW::getEventManager()->bind("moderation.after_content_approve", array($this, "afterContentApprove"));
     }
 
     public function onCollectAddNewContentItem( BASE_CLASS_EventCollector $event )
@@ -560,4 +562,31 @@ class BLOGS_CLASS_EventHandler
             $event->setData($data);
         }
     }
+
+    public function afterContentApprove( OW_Event $event )
+    {
+
+        $params = $event->getParams();
+
+        if ( $params["entityType"] != PostService::FEED_ENTITY_TYPE )
+        {
+            return;
+        }
+
+        if ( !$params["isNew"] )
+        {
+            return;
+        }
+
+        $blogDto = PostService::getInstance()->findById($params['entityId']);
+
+        if ( $blogDto === null )
+        {
+            return;
+        }
+
+        BOL_AuthorizationService::getInstance()->trackActionForUser($blogDto->authorId, 'blogs', 'add_blog');
+    }
+
+
 }
