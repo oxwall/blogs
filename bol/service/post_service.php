@@ -231,6 +231,18 @@ class PostService
         return array("object", "embed", "param", "strong", "i", "u", "a", "!--more--", "img", "blockquote", "span", "pre", "iframe");
     }
 
+    /**
+     * Find latest posts authors ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicPostsAuthorsIds($first, $count)
+    {
+        return $this->dao->findLatestPublicPostsAuthorsIds($first, $count);
+    }
+
     public function updateBlogsPrivacy( $userId, $privacy )
     {
         $count = $this->countUserPost($userId);

@@ -96,6 +96,105 @@ class BLOGS_CLASS_EventHandler
         OW::getEventManager()->bind('usercredits.get_action_key', array($credits, 'getActionKey'));
 
         OW::getEventManager()->bind("moderation.after_content_approve", array($this, "afterContentApprove"));
+        OW::getEventManager()->bind("base.sitemap.get_urls", array($this, "onSitemapGetUrls"));
+    }
+
+
+    /**
+     * Get sitemap urls
+     *
+     * @param OW_Event $event
+     * @return void
+     */
+    public function onSitemapGetUrls( OW_Event $event )
+    {
+        $params = $event->getParams();
+
+        if ( OW::getUser()->isAuthorized('blogs', 'view') )
+        {
+            switch ( $params['entity'] )
+            {
+                case 'blogs_tags' :
+                    $urls  = [];
+                    $tags  = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $params['limit']);
+
+                    foreach ( $tags as $tag )
+                    {
+                        $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' =>  'browse-by-tag'
+                        )) . '?tag=' . $tag['label'];
+                    }
+
+                    $event->setData($urls);
+                    break;
+
+                case 'blogs_post_authors' :
+                    $urls   = [];
+                    $users  = PostService::getInstance()->findLatestPublicPostsAuthorsIds(0, $params['limit']);
+
+                    foreach ( $users as $userId )
+                    {
+                        $userName = BOL_UserService::getInstance()->getUsername($userId);
+
+                        if ( !$userName )
+                        {
+                            continue;
+                        }
+
+                        $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
+                            'user' =>  $userName
+                        ));
+
+                        $archives = PostService::getInstance()->findUserArchiveData($userId);
+
+                        if ( $archives )
+                        {
+                            foreach( $archives as $archive )
+                            {
+
+                                $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
+                                    'user' =>  $userName
+                                )) . '?month=' . $archive['m'] . '-' . $archive['y'];
+                            }
+                        }
+                    }
+
+                    $event->setData($urls);
+                    break;
+
+                case 'blogs_post_list' :
+                    $urls   = [];
+                    $posts  = PostService::getInstance()->findList(0, $params['limit']);
+
+                    foreach ( $posts as $post )
+                    {
+                        $urls[] = OW::getRouter()->urlForRoute('user-post', array(
+                            'id' =>  $post->id
+                        ));
+                    }
+
+                    $event->setData($urls);
+                    break;
+
+                case 'blogs_list' :
+                    $event->setData(array(
+                        OW::getRouter()->urlForRoute('blogs'),
+                        OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' =>  'latest'
+                        )),
+                        OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' =>  'top-rated'
+                        )),
+                        OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' =>  'most-discussed'
+                        )),
+                        OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' =>  'browse-by-tag'
+                        ))
+                    ));
+                    break;
+            }
+        }
     }
 
     public function onCollectAddNewContentItem( BASE_CLASS_EventCollector $event )
