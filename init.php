@@ -46,10 +46,10 @@ OW::getRouter()->addRoute(new OW_Route('post-part', 'blogs/post/:id/:part', "BLO
 
 OW::getRouter()->addRoute(new OW_Route('user-blog', 'blogs/user/:user', "BLOGS_CTRL_UserBlog", 'index'));
 
-OW::getRouter()->addRoute(new OW_Route('user-post', 'blogs/:id', "BLOGS_CTRL_View", 'index')); // +
+OW::getRouter()->addRoute(new OW_Route('user-post', 'blogs/:id', "BLOGS_CTRL_View", 'index'));
 
-OW::getRouter()->addRoute(new OW_Route('blogs', 'blogs', "BLOGS_CTRL_Blog", 'index', array('list' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'latest')))); // +
-OW::getRouter()->addRoute(new OW_Route('blogs.list', 'blogs/list/:list', "BLOGS_CTRL_Blog", 'index')); // +
+OW::getRouter()->addRoute(new OW_Route('blogs', 'blogs', "BLOGS_CTRL_Blog", 'index', array('list' => array(OW_Route::PARAM_OPTION_HIDDEN_VAR => 'latest'))));
+OW::getRouter()->addRoute(new OW_Route('blogs.list', 'blogs/list/:list', "BLOGS_CTRL_Blog", 'index'));
 
 OW::getRouter()->addRoute(new OW_Route('blog-manage-posts', 'blogs/my-published-posts/', "BLOGS_CTRL_ManagementPost", 'index'));
 OW::getRouter()->addRoute(new OW_Route('blog-manage-drafts', 'blogs/my-drafts/', "BLOGS_CTRL_ManagementPost", 'index'));
