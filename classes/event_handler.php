@@ -130,17 +130,11 @@ class BLOGS_CLASS_EventHandler
 
                 case 'blogs_post_authors' :
                     $urls   = [];
-                    $users  = PostService::getInstance()->findLatestPublicPostsAuthorsIds(0, $params['limit']);
+                    $usersIds  = PostService::getInstance()->findLatestPublicPostsAuthorsIds(0, $params['limit']);
+                    $userNames = BOL_UserService::getInstance()->getUserNamesForList($usersIds);
 
-                    foreach ( $users as $userId )
+                    foreach ( array_filter($userNames) as $userId => $userName )
                     {
-                        $userName = BOL_UserService::getInstance()->getUsername($userId);
-
-                        if ( !$userName )
-                        {
-                            continue;
-                        }
-
                         $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
                             'user' =>  $userName
                         ));
