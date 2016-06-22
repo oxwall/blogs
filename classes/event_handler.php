@@ -132,7 +132,7 @@ class BLOGS_CLASS_EventHandler
                 switch ( $params['entity'] )
                 {
                     case 'blogs_tags' :
-                        $tags  = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $localLimit, $offset);
+                        $tags = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $localLimit, $offset);
 
                         if ( $tags )
                         {
@@ -141,8 +141,6 @@ class BLOGS_CLASS_EventHandler
                                 $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
                                     'list' => 'browse-by-tag'
                                 )) . '?tag=' . $tag['label'];
-
-                                $urlsCount++;
                             }
 
                             $isDataEmpty = count($tags) != $localLimit;
@@ -162,8 +160,6 @@ class BLOGS_CLASS_EventHandler
                                 $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
                                     'user' => $userName
                                 ));
-
-                                $urlsCount++;
                             }
 
                             $isDataEmpty = count($usersIds) != $localLimit;
@@ -180,8 +176,6 @@ class BLOGS_CLASS_EventHandler
                                 $urls[] = OW::getRouter()->urlForRoute('user-post', array(
                                     'id' => $post->id
                                 ));
-
-                                $urlsCount++;
                             }
 
                             $isDataEmpty = count($posts) != $localLimit;
@@ -207,6 +201,7 @@ class BLOGS_CLASS_EventHandler
                         break;
                 }
 
+                $urlsCount = count($urls);
                 $offset += $localLimit;
             }
             while ($urlsCount < $globalLimit && !$isDataEmpty);
