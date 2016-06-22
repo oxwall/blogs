@@ -206,7 +206,10 @@ class BLOGS_CLASS_EventHandler
             }
             while ($urlsCount < $globalLimit && !$isDataEmpty);
 
-            $event->setData($urls);
+            if ( $urls )
+            {
+                $event->setData($urls);
+            }
         }
     }
 
