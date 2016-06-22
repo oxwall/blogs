@@ -112,82 +112,106 @@ class BLOGS_CLASS_EventHandler
 
         if ( OW::getUser()->isAuthorized('blogs', 'view') )
         {
-            switch ( $params['entity'] )
+            $urls = [];
+            $urlsCount = 0;
+            $globalLimit = (int) $params['limit'];
+            $localLimit  = 500;
+            $offset = 0;
+
+            do
             {
-                case 'blogs_tags' :
-                    $urls  = [];
-                    $tags  = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $params['limit']);
+                $isDataEmpty = true;
 
-                    foreach ( $tags as $tag )
-                    {
-                        $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
-                            'list' =>  'browse-by-tag'
-                        )) . '?tag=' . $tag['label'];
-                    }
+                if ( $urlsCount + $localLimit > $globalLimit )
+                {
+                    $localLimit = $globalLimit < $localLimit
+                        ? $globalLimit
+                        : $globalLimit - $urlsCount;
+                }
 
-                    $event->setData($urls);
-                    break;
+                switch ( $params['entity'] )
+                {
+                    case 'blogs_tags' :
+                        $tags  = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $localLimit, $offset);
 
-                case 'blogs_post_authors' :
-                    $urls   = [];
-                    $usersIds  = PostService::getInstance()->findLatestPublicPostsAuthorsIds(0, $params['limit']);
-                    $userNames = BOL_UserService::getInstance()->getUserNamesForList($usersIds);
-
-                    foreach ( array_filter($userNames) as $userId => $userName )
-                    {
-                        $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
-                            'user' =>  $userName
-                        ));
-
-                        $archives = PostService::getInstance()->findUserArchiveData($userId);
-
-                        if ( $archives )
+                        if ( $tags )
                         {
-                            foreach( $archives as $archive )
+                            foreach ( $tags as $tag )
                             {
+                                $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                                    'list' => 'browse-by-tag'
+                                )) . '?tag=' . $tag['label'];
 
-                                $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
-                                    'user' =>  $userName
-                                )) . '?month=' . $archive['m'] . '-' . $archive['y'];
+                                $urlsCount++;
                             }
+
+                            $isDataEmpty = count($tags) != $localLimit;
                         }
-                    }
+                        break;
 
-                    $event->setData($urls);
-                    break;
+                    case 'blogs_post_authors' :
+                        $usersIds  = PostService::getInstance()->findLatestPublicPostsAuthorsIds($offset, $localLimit);
 
-                case 'blogs_post_list' :
-                    $urls   = [];
-                    $posts  = PostService::getInstance()->findList(0, $params['limit']);
+                        if ( $usersIds )
+                        {
+                            $userNames = BOL_UserService::getInstance()->getUserNamesForList($usersIds);
 
-                    foreach ( $posts as $post )
-                    {
-                        $urls[] = OW::getRouter()->urlForRoute('user-post', array(
-                            'id' =>  $post->id
-                        ));
-                    }
+                            // skip deleted users
+                            foreach ( array_filter($userNames) as $userId => $userName )
+                            {
+                                $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
+                                    'user' => $userName
+                                ));
 
-                    $event->setData($urls);
-                    break;
+                                $urlsCount++;
+                            }
 
-                case 'blogs_list' :
-                    $event->setData(array(
-                        OW::getRouter()->urlForRoute('blogs'),
-                        OW::getRouter()->urlForRoute('blogs.list', array(
-                            'list' =>  'latest'
-                        )),
-                        OW::getRouter()->urlForRoute('blogs.list', array(
-                            'list' =>  'top-rated'
-                        )),
-                        OW::getRouter()->urlForRoute('blogs.list', array(
-                            'list' =>  'most-discussed'
-                        )),
-                        OW::getRouter()->urlForRoute('blogs.list', array(
-                            'list' =>  'browse-by-tag'
-                        ))
-                    ));
-                    break;
+                            $isDataEmpty = count($usersIds) != $localLimit;
+                        }
+                        break;
+
+                    case 'blogs_post_list' :
+                        $posts = PostService::getInstance()->findList($offset, $localLimit);
+
+                        if ( $posts )
+                        {
+                            foreach ( $posts as $post )
+                            {
+                                $urls[] = OW::getRouter()->urlForRoute('user-post', array(
+                                    'id' => $post->id
+                                ));
+
+                                $urlsCount++;
+                            }
+
+                            $isDataEmpty = count($posts) != $localLimit;
+                        }
+                        break;
+
+                    case 'blogs_list' :
+                        $urls = array(
+                            OW::getRouter()->urlForRoute('blogs'),
+                            OW::getRouter()->urlForRoute('blogs.list', array(
+                                'list' =>  'latest'
+                            )),
+                            OW::getRouter()->urlForRoute('blogs.list', array(
+                                'list' =>  'top-rated'
+                            )),
+                            OW::getRouter()->urlForRoute('blogs.list', array(
+                                'list' =>  'most-discussed'
+                            )),
+                            OW::getRouter()->urlForRoute('blogs.list', array(
+                                'list' =>  'browse-by-tag'
+                            ))
+                        );
+                        break;
+                }
+
+                $offset += $localLimit;
             }
+            while ($urlsCount < $globalLimit && !$isDataEmpty);
+
+            $event->setData($urls);
         }
     }
 

@@ -302,8 +302,8 @@ class PostDao extends OW_BaseDao
         return $this->dbo->queryForColumnList($query, array(
             'privacy' => 'everybody',
             'draft' => 0,
-            'f' => $first,
-            'c' => $count,
+            'f' => (int) $first,
+            'c' => (int) $count,
         ));
     }
 
@@ -368,7 +368,7 @@ class PostDao extends OW_BaseDao
         $ex = new OW_Example();
         $ex->andFieldEqual('isDraft', 0);
         $ex->andFieldEqual('privacy', 'everybody');
-        $ex->setOrder('timestamp desc')->setLimitClause($first, $count);
+        $ex->setOrder('timestamp desc')->setLimitClause((int) $first, (int) $count);
 
         $cacheLifeTime = self::CACHE_LIFE_TIME;
         $tags = array( self::CACHE_TAG_POST_COUNT );
