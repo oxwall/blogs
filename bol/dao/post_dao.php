@@ -353,6 +353,23 @@ class PostDao extends OW_BaseDao
         return $this->countByExample($ex);
     }
 
+    /**
+     * Find latest public list ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicListIds( $first, $count )
+    {
+        $ex = new OW_Example();
+        $ex->andFieldEqual('isDraft', 0);
+        $ex->andFieldEqual('privacy', 'everybody');
+        $ex->setOrder('timestamp desc')->setLimitClause((int) $first, (int) $count);
+
+        return $this->findIdListByExample($ex);
+    }
+
     public function findList( $first, $count )
     {
         if ($first < 0)
