@@ -172,6 +172,18 @@ class PostService
         return $this->dao->countUserPostByPeriod($id, $lb, $ub);
     }
 
+    /**
+     * Find latest public list ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicListIds( $first, $count )
+    {
+        return $this->dao->findLatestPublicListIds($first, $count);
+    }
+
     //</USER-BLOG>
     //<SITE-BLOG>
     public function findList( $first, $count )
