@@ -58,9 +58,6 @@ OW::getRouter()->addRoute(new OW_Route('blog-manage-comments', 'blogs/my-incomin
 OW::getRouter()->addRoute(new OW_Route('blogs-admin', 'admin/blogs', "BLOGS_CTRL_Admin", 'index'));
 
 $eventHandler = BLOGS_CLASS_EventHandler::getInstance();
-$eventHandler->genericInit();
+$eventHandler->init();
 BLOGS_CLASS_ContentProvider::getInstance()->init();
-
-OW::getEventManager()->bind(BASE_CMP_AddNewContent::EVENT_NAME,     array($eventHandler, 'onCollectAddNewContentItem'));
-OW::getEventManager()->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME,  array($eventHandler, 'onCollectQuickLinks'));
 

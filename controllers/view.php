@@ -148,7 +148,7 @@ class BLOGS_CTRL_View extends OW_ActionController
                 $postTags .= $tag->label . ", ";
             }
             $postTags = substr($postTags, 0, -2);
-            OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'blog_post_description', array('post_body' => htmlspecialchars(strip_tags($post_body)), 'tags' => htmlspecialchars($postTags))));
+            //OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'blog_post_description', array('post_body' => htmlspecialchars(strip_tags($post_body)), 'tags' => htmlspecialchars($postTags))));
             //OW::getDocument()->setKeywords(OW::getLanguage()->text('nav', 'page_default_keywords').", ".$postTags);
         }
 
@@ -333,6 +333,16 @@ class BLOGS_CTRL_View extends OW_ActionController
 
         $this->addComponent('tagCloud', $tagCloud);
         //~ additional components
+
+        $eParams = array(
+            "entityKey" => "blogPost",
+            "title" => "blogs+meta_title_blog_post",
+            "description" => "blogs+meta_desc_blog_post",
+            "keywords" => "blogs+meta_keywords_blog_post",
+            "vars" => array("post_body" => htmlspecialchars(strip_tags($post_body)), "post_subject" => $post->getTitle())
+        );
+
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $eParams));
     }
 
     public function approve($params)

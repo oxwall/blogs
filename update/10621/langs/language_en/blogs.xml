@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="blogs" label="Blogs" language_tag="en" language_label="English">
+    <key name="seo_meta_section"><value>Blogs</value></key>
+    <key name="seo_meta_blogs_list_label"><value>Blogs List Page</value></key>
+    <key name="meta_title_blogs_list"><value>{$blog_list} blogs | {$site_name}</value></key>
+    <key name="meta_desc_blogs_list"><value>Read all {$blog_list} blog posts at {$site_name}, leave your own comments, and discuss the topics with other site members.</value></key>
+    <key name="meta_keywords_blogs_list"><value></value></key>
+    <key name="seo_meta_user_blog_label"><value>Individual Member Blog Page</value></key>
+    <key name="meta_title_user_blog"><value>Blog by {$user_name}, {$user_age} | {$site_name}</value></key>
+    <key name="meta_desc_user_blog"><value>Read all {$user_name}'s posts at {$site_name}, and leave your own comments.</value></key>
+    <key name="meta_keywords_user_blog"><value></value></key>
+    <key name="seo_meta_blog_post_label"><value>Individual Member Blog Post Page</value></key>
+    <key name="meta_title_blog_post"><value>{$post_subject} | {$site_name} Blog</value></key>
+    <key name="meta_desc_blog_post"><value>{$post_body}</value></key>
+    <key name="meta_keywords_blog_post"><value></value></key>
+</prefix>
