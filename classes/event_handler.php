@@ -151,12 +151,12 @@ class BLOGS_CLASS_EventHandler
                     break;
 
                 case 'blogs_post_list' :
-                    $posts = PostService::getInstance()->findList($offset, $limit);
+                    $posts = PostService::getInstance()->findLatestPublicListIds($offset, $limit);
 
-                    foreach ( $posts as $post )
+                    foreach ( $posts as $postId )
                     {
                         $urls[] = OW::getRouter()->urlForRoute('user-post', array(
-                            'id' => $post->id
+                            'id' => $postId
                         ));
                     }
                     break;
