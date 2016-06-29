@@ -118,7 +118,7 @@ class BLOGS_CLASS_EventHandler
     {
         $params = $event->getParams();
 
-        if ( OW::getUser()->isAuthorized('blogs', 'view') )
+        if ( BOL_AuthorizationService::getInstance()->isActionAuthorizedForGuest('blogs', 'view') )
         {
             $offset = (int) $params['offset'];
             $limit  = (int) $params['limit'];
