@@ -193,6 +193,7 @@ class BLOGS_CTRL_Blog extends OW_ActionController
         $this->addComponent('paging', $paging);
 
         $params = array(
+            "sectionKey" => "blogs",
             "entityKey" => "blogsList",
             "title" => "blogs+meta_title_blogs_list",
             "description" => "blogs+meta_desc_blogs_list",

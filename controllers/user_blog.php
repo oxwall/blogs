@@ -160,6 +160,7 @@ class BLOGS_CTRL_UserBlog extends OW_ActionController
             $vars = BOL_SeoService::getInstance()->getUserMetaInfo($author);
 
             $eParams = array(
+                "sectionKey" => "blogs",
                 "entityKey" => "userBlog",
                 "title" => "blogs+meta_title_user_blog",
                 "description" => "blogs+meta_desc_user_blog",
