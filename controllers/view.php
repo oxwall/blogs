@@ -335,6 +335,7 @@ class BLOGS_CTRL_View extends OW_ActionController
         //~ additional components
 
         $eParams = array(
+            "sectionKey" => "blogs",
             "entityKey" => "blogPost",
             "title" => "blogs+meta_title_blog_post",
             "description" => "blogs+meta_desc_blog_post",
