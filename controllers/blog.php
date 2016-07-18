@@ -44,7 +44,6 @@ class BLOGS_CTRL_Blog extends OW_ActionController
             $params['list'] = 'latest';
         }
 
-        $plugin = OW::getPluginManager()->getPlugin('blogs');
         OW::getNavigation()->activateMenuItem(OW_Navigation::MAIN, 'blogs', 'main_menu_item');
 
         $this->setPageHeading(OW::getLanguage()->text('blogs', 'list_page_heading'));
@@ -57,11 +56,6 @@ class BLOGS_CTRL_Blog extends OW_ActionController
 
             return;
         }
-
-        /*
-          @var $service PostService
-         */
-        $service = PostService::getInstance();
 
         $page = (!empty($_GET['page']) && intval($_GET['page']) > 0 ) ? $_GET['page'] : 1;
 
@@ -137,24 +131,12 @@ class BLOGS_CTRL_Blog extends OW_ActionController
         }
 
         $this->addComponent('tagCloud', $tagCloud);
-
-
         $this->assign('showList', $showList);
-
-        $list = array();
-        $itemsCount = 0;
 
         list($list, $itemsCount) = $this->getData($case, $first, $count);
 
         $posts = array();
-
-        $toolbars = array();
-
-        $userService = BOL_UserService::getInstance();
-
         $authorIdList = array();
-
-        $previewLength = 50;
 
         foreach ( $list as $item )
         {
@@ -208,8 +190,18 @@ class BLOGS_CTRL_Blog extends OW_ActionController
         $this->assign('url_new_post', OW::getRouter()->urlForRoute('post-save-new'));
 
         $paging = new BASE_CMP_Paging($page, ceil($itemsCount / $rpp), 5);
-
         $this->addComponent('paging', $paging);
+
+        $params = array(
+            "sectionKey" => "blogs",
+            "entityKey" => "blogsList",
+            "title" => "blogs+meta_title_blogs_list",
+            "description" => "blogs+meta_desc_blogs_list",
+            "keywords" => "blogs+meta_keywords_blogs_list",
+            "vars" => array( "blog_list" => OW::getLanguage()->text("blogs", str_replace("-", "_", $case)."_title") )
+        );
+        
+        OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $params));
     }
 
     private function getData( $case, $first, $count )
@@ -223,8 +215,8 @@ class BLOGS_CTRL_Blog extends OW_ActionController
         {
             case 'most-discussed':
 
-                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'most_discussed_title'));
-                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'most_discussed_description'));
+//                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'most_discussed_title'));
+//                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'most_discussed_description'));
 
                 $commentService = BOL_CommentService::getInstance();
 
@@ -273,8 +265,8 @@ class BLOGS_CTRL_Blog extends OW_ActionController
 
             case 'top-rated':
 
-                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'top_rated_title'));
-                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'top_rated_description'));
+//                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'top_rated_title'));
+//                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'top_rated_description'));
 
                 $info = array();
 
@@ -337,8 +329,8 @@ class BLOGS_CTRL_Blog extends OW_ActionController
                         $mostPopularTags .= $tag['label'] . ", ";
                     }
 
-                    OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'browse_by_tag_title'));
-                    OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'browse_by_tag_description', array('tags' => $mostPopularTags)));
+//                    OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'browse_by_tag_title'));
+//                    OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'browse_by_tag_description', array('tags' => $mostPopularTags)));
 
                     break;
                 }
@@ -375,14 +367,14 @@ class BLOGS_CTRL_Blog extends OW_ActionController
                     $list[] = array('dto' => $dto);
                 }
 
-                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'browse_by_tag_item_title', array('tag' => UTIL_HtmlTag::stripTags($_GET['tag']))));
-                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'browse_by_tag_item_description', array('tag' => UTIL_HtmlTag::stripTags($_GET['tag']))));
+//                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'browse_by_tag_item_title', array('tag' => UTIL_HtmlTag::stripTags($_GET['tag']))));
+//                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'browse_by_tag_item_description', array('tag' => UTIL_HtmlTag::stripTags($_GET['tag']))));
 
                 break;
 
             case 'latest':
-                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'latest_title'));
-                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'latest_description'));
+//                OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'latest_title'));
+//                OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'latest_description'));
 
                 $arr = $service->findList($first, $count);
 

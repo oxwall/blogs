@@ -156,8 +156,22 @@ class BLOGS_CTRL_UserBlog extends OW_ActionController
 
             $itemsCount = $service->countUserPost($author->getId());
 
-            OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'user_blog_title', array('display_name'=>$displayName)));
-            OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'user_blog_description', array('display_name'=>$displayName) ));
+            // meta info
+            $vars = BOL_SeoService::getInstance()->getUserMetaInfo($author);
+
+            $eParams = array(
+                "sectionKey" => "blogs",
+                "entityKey" => "userBlog",
+                "title" => "blogs+meta_title_user_blog",
+                "description" => "blogs+meta_desc_user_blog",
+                "keywords" => "blogs+meta_keywords_user_blog",
+                "vars" => $vars
+            );
+
+            OW::getEventManager()->trigger(new OW_Event("base.provide_page_meta_info", $eParams));
+
+//            OW::getDocument()->setTitle(OW::getLanguage()->text('blogs', 'user_blog_title', array('display_name'=>$displayName)));
+//            OW::getDocument()->setDescription(OW::getLanguage()->text('blogs', 'user_blog_description', array('display_name'=>$displayName) ));
         }
 
         $this->assign('archiveHeaderPart', (!empty($arciveHeaderPart) ? $arciveHeaderPart : ''));

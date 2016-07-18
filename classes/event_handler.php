@@ -68,6 +68,14 @@ class BLOGS_CLASS_EventHandler
         $this->service = PostService::getInstance();
     }
 
+    public function init()
+    {
+        $this->genericInit();
+        OW::getEventManager()->bind("base.collect_seo_meta_data", array($this, 'onCollectMetaData'));
+        OW::getEventManager()->bind(BASE_CMP_AddNewContent::EVENT_NAME,     array($this, 'onCollectAddNewContentItem'));
+        OW::getEventManager()->bind(BASE_CMP_QuickLinksWidget::EVENT_NAME,  array($this, 'onCollectQuickLinks'));
+    }
+
     public function genericInit()
     {
         OW::getEventManager()->bind(OW_EventManager::ON_USER_SUSPEND, array(PostService::getInstance(), 'onAuthorSuspend'));
@@ -96,6 +104,89 @@ class BLOGS_CLASS_EventHandler
         OW::getEventManager()->bind('usercredits.get_action_key', array($credits, 'getActionKey'));
 
         OW::getEventManager()->bind("moderation.after_content_approve", array($this, "afterContentApprove"));
+        OW::getEventManager()->bind("base.sitemap.get_urls", array($this, "onSitemapGetUrls"));
+    }
+
+
+    /**
+     * Get sitemap urls
+     *
+     * @param OW_Event $event
+     * @return void
+     */
+    public function onSitemapGetUrls( OW_Event $event )
+    {
+        $params = $event->getParams();
+
+        if ( BOL_AuthorizationService::getInstance()->isActionAuthorizedForGuest('blogs', 'view') )
+        {
+            $offset = (int) $params['offset'];
+            $limit  = (int) $params['limit'];
+            $urls   = array();
+
+            switch ( $params['entity'] )
+            {
+                case 'blogs_tags' :
+                    $tags = BOL_TagService::getInstance()->findMostPopularTags('blog-post', $limit, $offset);
+
+                    foreach ( $tags as $tag )
+                    {
+                        $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                            'list' => 'browse-by-tag'
+                        )) . '?tag=' . $tag['label'];
+                    }
+                    break;
+
+                case 'blogs_post_authors' :
+                    $usersIds  = PostService::getInstance()->findLatestPublicPostsAuthorsIds($offset, $limit);
+                    $userNames = BOL_UserService::getInstance()->getUserNamesForList($usersIds);
+
+                    // skip deleted users
+                    foreach ( array_filter($userNames) as $userId => $userName )
+                    {
+                        $urls[] = OW::getRouter()->urlForRoute('user-blog', array(
+                            'user' => $userName
+                        ));
+                    }
+                    break;
+
+                case 'blogs_post_list' :
+                    $posts = PostService::getInstance()->findLatestPublicListIds($offset, $limit);
+
+                    foreach ( $posts as $postId )
+                    {
+                        $urls[] = OW::getRouter()->urlForRoute('user-post', array(
+                            'id' => $postId
+                        ));
+                    }
+                    break;
+
+                case 'blogs_list' :
+                    $urls[] = OW::getRouter()->urlForRoute('blogs');
+
+                    $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                        'list' =>  'latest'
+                    ));
+
+                    $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                        'list' =>  'top-rated'
+                    ));
+
+                    $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                        'list' =>  'most-discussed'
+                    ));
+
+                    $urls[] = OW::getRouter()->urlForRoute('blogs.list', array(
+                        'list' =>  'browse-by-tag'
+                    ));
+                    break;
+            }
+
+            if ( $urls )
+            {
+                $event->setData($urls);
+            }
+        }
     }
 
     public function onCollectAddNewContentItem( BASE_CLASS_EventCollector $event )
@@ -588,5 +679,52 @@ class BLOGS_CLASS_EventHandler
         BOL_AuthorizationService::getInstance()->trackActionForUser($blogDto->authorId, 'blogs', 'add_blog');
     }
 
+    public function onCollectMetaData( BASE_CLASS_EventCollector $e )
+    {
+        $language = OW::getLanguage();
 
+        $items = array(
+            array(
+                "entityKey" => "blogsList",
+                "entityLabel" => $language->text("blogs", "seo_meta_blogs_list_label"),
+                "iconClass" => "ow_ic_newsfeed",
+                "langs" => array(
+                    "title" => "blogs+meta_title_blogs_list",
+                    "description" => "blogs+meta_desc_blogs_list",
+                    "keywords" => "blogs+meta_keywords_blogs_list"
+                ),
+                "vars" => array("site_name")
+            ),
+            array(
+                "entityKey" => "userBlog",
+                "entityLabel" => $language->text("blogs", "seo_meta_user_blog_label"),
+                "iconClass" => "ow_ic_user",
+                "langs" => array(
+                    "title" => "blogs+meta_title_user_blog",
+                    "description" => "blogs+meta_desc_user_blog",
+                    "keywords" => "blogs+meta_keywords_user_blog"
+                ),
+                "vars" => array("user_name", "user_gender", "user_age", "user_location", "site_name")
+            ),
+            array(
+                "entityKey" => "blogPost",
+                "entityLabel" => $language->text("blogs", "seo_meta_blog_post_label"),
+                "iconClass" => "ow_ic_file",
+                "langs" => array(
+                    "title" => "blogs+meta_title_blog_post",
+                    "description" => "blogs+meta_desc_blog_post",
+                    "keywords" => "blogs+meta_keywords_blog_post"
+                ),
+                "vars" => array("post_subject", "post_body", "site_name")
+            ),
+        );
+
+
+        foreach ($items as &$item)
+        {
+            $item["sectionLabel"] = $language->text("blogs", "seo_meta_section");
+            $item["sectionKey"] = "blogs";
+            $e->add($item);
+        }
+    }
 }

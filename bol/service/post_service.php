@@ -172,6 +172,18 @@ class PostService
         return $this->dao->countUserPostByPeriod($id, $lb, $ub);
     }
 
+    /**
+     * Find latest public list ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicListIds( $first, $count )
+    {
+        return $this->dao->findLatestPublicListIds($first, $count);
+    }
+
     //</USER-BLOG>
     //<SITE-BLOG>
     public function findList( $first, $count )
@@ -229,6 +241,18 @@ class PostService
     public function getAllowedHtmlTags()
     {
         return array("object", "embed", "param", "strong", "i", "u", "a", "!--more--", "img", "blockquote", "span", "pre", "iframe");
+    }
+
+    /**
+     * Find latest posts authors ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicPostsAuthorsIds($first, $count)
+    {
+        return $this->dao->findLatestPublicPostsAuthorsIds($first, $count);
     }
 
     public function updateBlogsPrivacy( $userId, $privacy )

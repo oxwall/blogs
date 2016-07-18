@@ -276,6 +276,37 @@ class PostDao extends OW_BaseDao
         return $this->findObjectByExample($ex);
     }
 
+    /**
+     * Find latest posts authors ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicPostsAuthorsIds($first, $count)
+    {
+        $query = "SELECT
+            `authorId`
+        FROM
+            `" . $this->getTableName() . "`
+        WHERE
+            `privacy` = :privacy
+                AND
+            `isDraft` = :draft
+        GROUP BY
+            `authorId`
+        ORDER BY
+            `timestamp` DESC
+        LIMIT :f, :c";
+
+        return $this->dbo->queryForColumnList($query, array(
+            'privacy' => 'everybody',
+            'draft' => 0,
+            'f' => (int) $first,
+            'c' => (int) $count,
+        ));
+    }
+
     public function findUserArchiveData( $id )
     {
         $query = "
@@ -322,6 +353,23 @@ class PostDao extends OW_BaseDao
         return $this->countByExample($ex);
     }
 
+    /**
+     * Find latest public list ids
+     *
+     * @param integer $first
+     * @param integer $count
+     * @return array
+     */
+    public function findLatestPublicListIds( $first, $count )
+    {
+        $ex = new OW_Example();
+        $ex->andFieldEqual('isDraft', 0);
+        $ex->andFieldEqual('privacy', 'everybody');
+        $ex->setOrder('timestamp desc')->setLimitClause((int) $first, (int) $count);
+
+        return $this->findIdListByExample($ex);
+    }
+
     public function findList( $first, $count )
     {
         if ($first < 0)
@@ -337,7 +385,7 @@ class PostDao extends OW_BaseDao
         $ex = new OW_Example();
         $ex->andFieldEqual('isDraft', 0);
         $ex->andFieldEqual('privacy', 'everybody');
-        $ex->setOrder('timestamp desc')->setLimitClause($first, $count);
+        $ex->setOrder('timestamp desc')->setLimitClause((int) $first, (int) $count);
 
         $cacheLifeTime = self::CACHE_LIFE_TIME;
         $tags = array( self::CACHE_TAG_POST_COUNT );
