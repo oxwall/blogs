@@ -66,7 +66,7 @@ class BLOGS_CMP_BlogWidget extends BASE_CLASS_Widget
 
             if ( mb_strlen($dto->getTitle()) > 50 )
             {
-                $dto->setTitle(UTIL_String::splitWord(UTIL_String::truncate($dto->getTitle(), 50, '...')));
+                $dto->setTitle(UTIL_String::truncate($dto->getTitle(), 50, '...'));
             }
             $text = $service->processPostText($dto->getPost());
 
