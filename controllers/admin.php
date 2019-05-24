@@ -82,7 +82,7 @@ class BLOGS_CTRL_Admin extends ADMIN_CTRL_Abstract
 
         $js->jQueryEvent('#btn-delete-content', 'click', 'if ( !confirm("'.OW::getLanguage()->text('blogs', 'confirm_delete_photos').'") ) return false;');
 
-        OW::getDocument()->addOnloadScript($js);    	
+        OW::getDocument()->addOnloadScript($js);
     }    
 
 }
