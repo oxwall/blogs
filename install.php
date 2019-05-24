@@ -28,9 +28,12 @@
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-OW::getPluginManager()->addPluginSettingsRouteName('blogs', 'blogs-admin');
 
-OW::getPluginManager()->addUninstallRouteName('blogs', 'blogs-uninstall');
+$pluginKey = 'blogs';
+
+OW::getPluginManager()->addPluginSettingsRouteName($pluginKey, 'blogs-admin');
+
+OW::getPluginManager()->addUninstallRouteName($pluginKey, 'blogs-uninstall');
 
 $dbPrefix = OW_DB_PREFIX;
 
@@ -53,26 +56,28 @@ EOT;
 
 OW::getDbo()->query($sql);
 
-if ( !OW::getConfig()->configExists('blogs', 'results_per_page') )
+if ( !OW::getConfig()->configExists($pluginKey, 'results_per_page') )
 {
-    OW::getConfig()->addConfig('blogs', 'results_per_page', 10, 'Post number per page');
+    OW::getConfig()->addConfig($pluginKey, 'results_per_page', 10, 'Post number per page');
 }
 
-if ( !OW::getConfig()->configExists('blogs', 'uninstall_inprogress') )
+if ( !OW::getConfig()->configExists($pluginKey, 'uninstall_inprogress') )
 {
-    OW::getConfig()->addConfig('blogs', 'uninstall_inprogress', 0, '');
+    OW::getConfig()->addConfig($pluginKey, 'uninstall_inprogress', 0, '');
 }
 
-if ( !OW::getConfig()->configExists('blogs', 'uninstall_cron_busy') )
+if ( !OW::getConfig()->configExists($pluginKey, 'uninstall_cron_busy') )
 {
-    OW::getConfig()->addConfig('blogs', 'uninstall_cron_busy', 0, '');
+    OW::getConfig()->addConfig($pluginKey, 'uninstall_cron_busy', 0, '');
 }
 
 $authorization = OW::getAuthorization();
-$groupName = 'blogs';
+$groupName =$pluginKey;
 $authorization->addGroup($groupName);
 $authorization->addAction($groupName, 'add_comment');
 $authorization->addAction($groupName, 'add');
 $authorization->addAction($groupName, 'view', true);
 
-OW::getLanguage()->importPluginLangs(OW::getPluginManager()->getPlugin('blogs')->getRootDir() . 'langs.zip', 'blogs');
+// import languages
+$plugin = OW::getPluginManager()->getPlugin($pluginKey);
+OW::getLanguage()->importLangsFromDir($plugin->getRootDir() . 'langs');

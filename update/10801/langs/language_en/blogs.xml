@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<prefix name="blogs" label="Blogs" language_tag="en" language_label="English">
+    <key name="comment_label"><value>Comment</value></key>
+    <key name="date_label"><value>Date</value></key>
+</prefix>
