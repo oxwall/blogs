@@ -184,7 +184,7 @@ class SaveForm extends Form
 
     public function __construct( Post $post, $tags = array() )
     {
-        parent::__construct('save');
+        parent::__construct('save', PostService::PLUGIN_KEY);
 
         $this->service = PostService::getInstance();
 
@@ -192,7 +192,7 @@ class SaveForm extends Form
 
         $this->setMethod('post');
 
-        $titleTextField = new TextField('title');
+        $titleTextField = new TextField('title', PostService::PLUGIN_KEY);
 
         $this->addElement($titleTextField->setLabel(OW::getLanguage()->text('blogs', 'save_form_lbl_title'))->setValue($post->getTitle())->setRequired(true));
 
@@ -210,14 +210,14 @@ class SaveForm extends Form
             BOL_TextFormatService::WS_BTN_VIDEO
         );
 
-        $postTextArea = new WysiwygTextarea('post', $buttons);
+        $postTextArea = new WysiwygTextarea('post', PostService::PLUGIN_KEY ,$buttons);
         $postTextArea->setSize(WysiwygTextarea::SIZE_L);
         $postTextArea->setLabel(OW::getLanguage()->text('blogs', 'save_form_lbl_post'));
         $postTextArea->setValue($post->getPost());
         $postTextArea->setRequired(true);
         $this->addElement($postTextArea);
 
-        $draftSubmit = new Submit('draft');
+        $draftSubmit = new Submit('draft', PostService::PLUGIN_KEY);
         $draftSubmit->addAttribute('onclick', "$('#save_post_command').attr('value', 'draft');");
 
         if ( $post->getId() != null && !$post->isDraft() )
@@ -240,7 +240,7 @@ class SaveForm extends Form
             $text = OW::getLanguage()->text('blogs', 'save_publish');
         }
 
-        $publishSubmit = new Submit('publish');
+        $publishSubmit = new Submit('publish', PostService::PLUGIN_KEY);
         $publishSubmit->addAttribute('onclick', "$('#save_post_command').attr('value', 'publish');");
 
         $this->addElement($publishSubmit->setValue($text));
@@ -259,7 +259,7 @@ class SaveForm extends Form
             }
         }
 
-        $tf = new TagsInputField('tf');
+        $tf = new TagsInputField('tf', PostService::PLUGIN_KEY);
         $tf->setLabel(OW::getLanguage()->text('blogs', 'tags_field_label'));
         $tf->setValue($tags);
 

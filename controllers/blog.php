@@ -111,7 +111,7 @@ class BLOGS_CTRL_Blog extends OW_ActionController
 
         $this->assign('isBrowseByTagCase', $isBrowseByTagCase);
 
-        $tagSearch = new BASE_CMP_TagSearch(OW::getRouter()->urlForRoute('blogs.list', array('list'=>'browse-by-tag')));
+        $tagSearch = new BASE_CMP_TagSearch(OW::getRouter()->urlForRoute('blogs.list', array('list'=>'browse-by-tag')), PostService::PLUGIN_KEY);
 
         $this->addComponent('tagSearch', $tagSearch);
 
