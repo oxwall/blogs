@@ -36,6 +36,8 @@
  */
 class PostService
 {
+    const PLUGIN_KEY = 'blogs';
+
     const FEED_ENTITY_TYPE = 'blog-post';
     const PRIVACY_ACTION_VIEW_BLOG_POSTS = 'blogs_view_blog_posts';
     const PRIVACY_ACTION_COMMENT_BLOG_POSTS = 'blogs_comment_blog_posts';
